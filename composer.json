@@ -6,6 +6,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "brackets/craftable-pro": "dev-main",
         "laravel/framework": "^11.0",
         "laravel/tinker": "^2.9"
     },
@@ -62,5 +63,11 @@
         }
     },
     "minimum-stability": "stable",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "repositories": {
+        "craftable-pro": {
+            "type": "vcs",
+            "url": "git@github.com:BRACKETS-by-TRIAD/craftable-pro.git"
+        }
+    }
 }

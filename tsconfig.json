@@ -1,0 +1,25 @@
+{
+    "compilerOptions": {
+        "target": "esnext",
+        "useDefineForClassFields": true,
+        "module": "esnext",
+        "moduleResolution": "node",
+        "strict": true,
+        "jsx": "preserve",
+        "sourceMap": true,
+        "resolveJsonModule": true,
+        "esModuleInterop": true,
+        "lib": ["esnext", "dom"],
+        "baseUrl": "./",
+        "paths": {
+            "@/*": ["resources/js/*"],
+            "craftable-pro/*": ["vendor/brackets/craftable-pro/resources/js/*"]
+        }
+    },
+    "include": [
+        "resources/js/craftable-pro/**/*.ts",
+        "resources/js/craftable-pro/**/*.d.ts",
+        "resources/js/craftable-pro/**/*.tsx",
+        "resources/js/craftable-pro/**/*.vue"
+    ]
+}
