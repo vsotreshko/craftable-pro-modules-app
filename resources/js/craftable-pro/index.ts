@@ -31,8 +31,34 @@ createInertiaApp({
     },
     progress: { color: "#4B5563" },
     resolve: async (name) => {
-        const pages = import.meta.glob("./Pages/**/*.vue");
-        const page = (await pages[`./Pages/${name}.vue`]()).default;
+        const pagesCoreGlob = import.meta.glob(
+            "../../../vendor/brackets/**/resources/js/Pages/**/*.vue",
+        );
+
+        const pagesLocalGlob = import.meta.glob("./Pages/**/*.vue");
+
+        const [pagesCore, pagesLocal] = await Promise.all([
+            pagesCoreGlob,
+            pagesLocalGlob,
+        ]);
+
+        const pages = { ...pagesLocal, ...pagesCore  };
+
+        const pagePath = Object.keys(pages).find((key) =>
+            key.endsWith(`/${name}.vue`),
+        );
+
+        if (!pagePath) {
+            throw new Error(`Page '${name}' not found.`);
+        }
+
+        const pageComponent = (await pages[pagePath]()).default;
+
+        const page = pageComponent || {
+            layout: name.startsWith("Auth/")
+                ? GuestLayout
+                : AuthenticatedLayout,
+        };
 
         if (page.layout === undefined) {
             if (name.startsWith("Auth/")) {
