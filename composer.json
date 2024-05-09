@@ -2,11 +2,15 @@
     "name": "laravel/laravel",
     "type": "project",
     "description": "The skeleton application for the Laravel framework.",
-    "keywords": ["laravel", "framework"],
+    "keywords": [
+        "laravel",
+        "framework"
+    ],
     "license": "MIT",
     "require": {
         "php": "^8.2",
         "brackets/craftable-pro": "dev-main",
+        "brackets/laravel-composer-package-module": "dev-main",
         "laravel/framework": "^11.0",
         "laravel/tinker": "^2.9"
     },
@@ -65,6 +69,10 @@
     "minimum-stability": "stable",
     "prefer-stable": true,
     "repositories": {
+        "laravel-module-composer-package": {
+            "type": "vcs",
+            "url": "git@github.com:vsotreshko/laravel-module-composer-package"
+        },
         "craftable-pro": {
             "type": "vcs",
             "url": "git@github.com:BRACKETS-by-TRIAD/craftable-pro.git"
