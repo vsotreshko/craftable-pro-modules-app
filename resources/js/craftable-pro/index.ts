@@ -1,4 +1,4 @@
-import { createApp, h } from "vue";
+import { App, createApp, h } from "vue";
 import { createInertiaApp, Link } from "@inertiajs/vue3";
 import { autoAnimatePlugin } from "@formkit/auto-animate/vue";
 import Toast, { POSITION } from "@brackets/vue-toastification";
@@ -19,6 +19,25 @@ const lang = document.documentElement.lang
     ? document.documentElement.lang.replace("-", "_")
     : "en";
 
+export default async function loadModulesComponents(app: App) {
+    // All Shared Components from modules
+    const componentsGlob = import.meta.glob(
+        "../../../vendor/brackets/**/resources/js/Components/Shared/*.vue",
+        { eager: true }
+    );
+
+    const [components] = await Promise.all([componentsGlob]);
+
+    // Registering Shared components as global components to the app
+    Object.keys(components).forEach((path: string) => {
+        const pathParts = path.split("/").at(-1);
+        if (pathParts) {
+            const componentName = pathParts.split(".")[0];
+            app.component(`${componentName}`, components[path].default);
+        }
+    });
+}
+
 createInertiaApp({
     title: (title) => {
         const titleElement = document.querySelector("title");
@@ -32,7 +51,7 @@ createInertiaApp({
     progress: { color: "#4B5563" },
     resolve: async (name) => {
         const pagesCoreGlob = import.meta.glob(
-            "../../../vendor/brackets/**/resources/js/Pages/**/*.vue",
+            "../../../vendor/brackets/**/resources/js/Pages/**/*.vue"
         );
 
         const pagesLocalGlob = import.meta.glob("./Pages/**/*.vue");
@@ -42,10 +61,10 @@ createInertiaApp({
             pagesLocalGlob,
         ]);
 
-        const pages = { ...pagesLocal, ...pagesCore  };
+        const pages = { ...pagesLocal, ...pagesCore };
 
         const pagePath = Object.keys(pages).find((key) =>
-            key.endsWith(`/${name}.vue`),
+            key.endsWith(`/${name}.vue`)
         );
 
         if (!pagePath) {
@@ -72,11 +91,12 @@ createInertiaApp({
     },
     setup({ el, App, props, plugin }) {
         loadTranslations(
-            `/lang/${(props.initialPage.props.auth as PageProps["auth"])?.user?.locale ??
-            lang
+            `/lang/${
+                (props.initialPage.props.auth as PageProps["auth"])?.user
+                    ?.locale ?? lang
             }/craftable-pro.json`,
-            (translations: JSON) => {
-                return createApp({ render: () => h(App, props) })
+            async (translations: JSON) => {
+                const app = createApp({ render: () => h(App, props) })
                     .use(plugin)
                     .use(Toast, {
                         transition: "Vue-Toastification__fade",
@@ -91,8 +111,11 @@ createInertiaApp({
                     .use(autoAnimatePlugin)
                     .use(ZiggyVue)
                     .component("Link", Link)
-                    .directive("can", can)
-                    .mount(el);
+                    .directive("can", can);
+
+                await loadModulesComponents(app);
+
+                return app.mount(el);
             }
         );
     },
